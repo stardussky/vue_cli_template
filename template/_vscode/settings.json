@@ -13,11 +13,6 @@
   "eslint.options": {
     "extensions": [".html", ".js", ".vue"],
   },
-  "eslint.validate": [
-    { "language": "html", "autoFix": true },
-    { "language": "vue", "autoFix": true },
-    { "language": "javascript", "autoFix": true }
-  ],
   "cSpell.words": ["Vuex"],
   "cSpell.ignorePaths": [
     "**/package.json",
