@@ -7,6 +7,7 @@ module.exports = (api, options) => {
     },
     dependencies: {
       '@vue/composition-api': '^0.5.0',
+      "prerender-spa-plugin": "^3.4.0",
       'core-js': '^3.6.4',
       'sass-resources-loader': '^2.0.1',
       vue: '^2.6.11',
