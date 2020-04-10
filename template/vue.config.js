@@ -6,6 +6,16 @@ module.exports = {
   publicPath: './',
   productionSourceMap: false,
   devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost/',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
+    },
     overlay: {
       warnings: true,
       errors: true
