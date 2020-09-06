@@ -1,18 +1,17 @@
 {
   "vetur.validation.template": false,
-  "prettier.singleQuote": true,
-  "prettier.semi": false,
-  "prettier.vueIndentScriptAndStyle": false,
+  "javascript.format.enable": false,
+  "editor.tabSize": 4,
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true,
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
   },
-  "javascript.format.enable": false,
   "eslint.alwaysShowStatus": true,
   "eslint.options": {
-    "extensions": [".html", ".js", ".vue"],
+    "extensions": [".html", ".js", ".vue"]
   },
+  "eslint.workingDirectories": ["./"],
   "cSpell.words": ["Vuex"],
   "cSpell.ignorePaths": [
     "**/package.json",
@@ -21,14 +20,5 @@
     "**/vscode-extension/**",
     "**/.git/objects/**",
     ".vscode"
-  ],
-  "[vue]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  ]
 }

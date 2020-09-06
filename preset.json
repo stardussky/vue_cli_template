@@ -3,15 +3,12 @@
   "plugins": {
     "@vue/cli-plugin-babel": {},
     "@vue/cli-plugin-router": {
-      "historyMode": false
+      "historyMode": true
     },
     "@vue/cli-plugin-vuex": {},
     "@vue/cli-plugin-eslint": {
       "config": "standard",
-      "lintOn": [
-        "save",
-        "commit"
-      ]
+      "lintOn": ["save", "commit"]
     }
   },
   "cssPreprocessor": "node-sass"

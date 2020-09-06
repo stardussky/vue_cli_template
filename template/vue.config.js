@@ -1,3 +1,4 @@
+const StyleLintPlugin = require('stylelint-webpack-plugin')
 const PrerenderSPAPlugin = require('prerender-spa-plugin')
 const Renderer = PrerenderSPAPlugin.PuppeteerRenderer
 const path = require('path')
@@ -12,25 +13,23 @@ module.exports = {
         ws: true,
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
-        }
-      }
+          '^/api': '',
+        },
+      },
     },
     overlay: {
       warnings: true,
-      errors: true
+      errors: true,
     },
-    disableHostCheck: true
   },
-  lintOnSave: process.env.NODE_ENV !== 'production',
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     const oneOfsMap = config.module.rule('scss').oneOfs.store
-    oneOfsMap.forEach(item => {
+    oneOfsMap.forEach((item) => {
       item
         .use('sass-resources-loader')
         .loader('sass-resources-loader')
         .options({
-          resources: ['./src/style/_main.scss']
+          resources: ['./src/style/mixins/_mixin.scss'], // 共用sass mixin檔 入口
         })
         .end()
     })
@@ -39,29 +38,39 @@ module.exports = {
     if (process.env.NODE_ENV !== 'production') return
     return {
       plugins: [
+        new StyleLintPlugin({
+          files: ['**/*.{vue,htm,html,css,sss,less,scss,sass}'],
+        }),
         new PrerenderSPAPlugin({
           staticDir: path.join(__dirname, 'dist'),
-          routes: ['/'],
+          routes: ['/', '/about'], // 填入router路徑
           renderer: new Renderer({
-            renderAfterDocumentEvent: 'render-event'
+            renderAfterDocumentEvent: 'render-event',
           }),
-          postProcess (renderedRoute) {
-            // renderedRoute.html = renderedRoute.html
-            //   .replace(new RegExp('="/js/', 'g'), '="./js/')
-            //   .replace(new RegExp('="/css/', 'g'), '="./css/')
-            //   .replace(new RegExp('/img/', 'g'), './img/')
-            //   .replace(new RegExp('/favicon.ico', 'g'), './favicon.ico')
-            // if (renderedRoute.route.endsWith('.html')) {
-            //   renderedRoute.outputPath = path.join(
-            //     __dirname,
-            //     'dist',
-            //     renderedRoute.route
-            //   )
-            // }
+          postProcess(renderedRoute) {
+            renderedRoute.route = renderedRoute.originalRoute
+            renderedRoute.html = renderedRoute.html.split(/>[\s]+</gim).join('><')
+            if (renderedRoute.route.endsWith('.html')) {
+              renderedRoute.outputPath = path.join(__dirname, 'dist', renderedRoute.route)
+            }
             return renderedRoute
-          }
-        })
-      ]
+          },
+          minify: {
+            collapseBooleanAttributes: true,
+            collapseWhitespace: true,
+            decodeEntities: true,
+            keepClosingSlash: true,
+            sortAttributes: true,
+            minifyCSS: true,
+            minifyJS: true,
+            processConditionalComments: true,
+            removeEmptyAttributes: true,
+            removeRedundantAttributes: true,
+            trimCustomFragments: true,
+            useShortDoctype: true,
+          },
+        }),
+      ],
     }
-  }
+  },
 }

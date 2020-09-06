@@ -1,0 +1,50 @@
+body, button, input {
+    font-family: map-get($font-family, default);
+}
+
+html, body {
+    @include typo('body', 1);
+
+    margin: 0;
+    padding: 0;
+    font-family: map-get($font-family, default);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+button {
+    @include typo('button', 1);
+
+    background-color: transparent;
+}
+
+.container {
+    @include make-container();
+}
+
+.row {
+    @include make-row();
+
+    &.-block {
+        display: block;
+    }
+
+    &.-no-gutters {
+        margin-right: 0;
+        margin-left: 0;
+    }
+}
+
+.sprite-icons {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+}
