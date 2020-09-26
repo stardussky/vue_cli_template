@@ -1,10 +1,10 @@
 <template>
     <div id="app">
         <div id="nav">
-            <router-link to="/">
+            <router-link to="/index.html">
                 Home
             </router-link> |
-            <router-link to="/about">
+            <router-link to="/about.html">
                 About
             </router-link>
         </div>
@@ -20,34 +20,34 @@ export default {
     name: 'App',
     metaInfo () {
         return {
-            title: this.seo.title,
+            title: this.meta.title,
             titleTemplate: '%s | Template',
             htmlAttrs: {
-                lang: this.seo.lang
+                lang: this.meta.lang
             },
             meta: [
                 { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' },
                 { 'http-equiv': 'x-dns-prefetch-control', content: 'on' },
                 { name: 'format-detection', content: 'telephone=no' },
                 { name: 'apple-mobile-web-app-capable', content: 'yes' },
-                { name: 'description', content: this.seo.description },
-                { property: 'og:locale', content: this.seo.lang },
+                { name: 'description', content: this.meta.description },
+                { property: 'og:locale', content: this.meta.lang },
                 { property: 'og:type', content: 'website' },
-                { property: 'og:title', content: this.seo.title },
-                { property: 'og:description', content: this.seo.description },
-                { property: 'og:url', content: this.seo.url },
-                { property: 'og:site_name', content: this.seo.title },
+                { property: 'og:title', content: this.meta.title },
+                { property: 'og:description', content: this.meta.description },
+                { property: 'og:url', content: this.meta.url },
+                { property: 'og:site_name', content: this.meta.title },
                 { property: 'og:image:width', content: '1200' },
                 { property: 'og:image:height', content: '630' },
-                { property: 'og:image', content: `${this.seo.url}og_img.jpg` },
-                { property: 'og:image:alt', content: this.seo.description },
+                { property: 'og:image', content: `${this.meta.url}og_img.jpg` },
+                { property: 'og:image:alt', content: this.meta.description },
                 { name: 'twitter:card', content: 'summary_large_image' },
-                { name: 'twitter:description', content: this.seo.description },
-                { name: 'twitter:title', content: this.seo.title },
-                { name: 'twitter:image', content: `${this.seo.url}og_img.jpg` },
-                { itemprop: 'name', content: this.seo.title },
-                { itemprop: 'description', content: this.seo.description },
-                { itemprop: 'image', content: `${this.seo.url}og_img.jpg` }
+                { name: 'twitter:description', content: this.meta.description },
+                { name: 'twitter:title', content: this.meta.title },
+                { name: 'twitter:image', content: `${this.meta.url}og_img.jpg` },
+                { itemprop: 'name', content: this.meta.title },
+                { itemprop: 'description', content: this.meta.description },
+                { itemprop: 'image', content: `${this.meta.url}og_img.jpg` }
             ],
             link: [
                 { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400&display=swap' }
@@ -56,11 +56,11 @@ export default {
     },
     data () {
         return {
-            seo: {
+            meta: {
                 lang: 'zh-TW',
                 title: 'Cli Template',
                 description: 'Cli Template',
-                url: 'http://localhost:8080/'
+                url: process.env.VUE_APP_URL
             }
         }
     },

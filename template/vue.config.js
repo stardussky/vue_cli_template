@@ -9,7 +9,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://localhost/',
+        target: process.env.VUE_APP_API,
         ws: true,
         changeOrigin: true,
         pathRewrite: {
@@ -23,6 +23,7 @@ module.exports = {
     },
   },
   chainWebpack: (config) => {
+    // sass-resources-loader
     const oneOfsMap = config.module.rule('scss').oneOfs.store
     oneOfsMap.forEach((item) => {
       item
@@ -33,6 +34,18 @@ module.exports = {
         })
         .end()
     })
+    // svg-sprite-loader
+    const iconDir = path.resolve('src/assets/icon')
+    config.module.rule('svg').exclude.add(iconDir).end()
+    config.module
+        .rule('svg-sprite-loader')
+        .test(/\.svg$/)
+        .include
+        .add(iconDir)
+        .end()
+        .use('svg-sprite-loader')
+        .loader('svg-sprite-loader')
+        .options({ symbolId: '[name]' })
   },
   configureWebpack: () => {
     if (process.env.NODE_ENV !== 'production') return
@@ -43,13 +56,11 @@ module.exports = {
         }),
         new PrerenderSPAPlugin({
           staticDir: path.join(__dirname, 'dist'),
-          routes: ['/', '/about'], // 填入router路徑
+          routes: ['/index.html', '/about.html'], // 填入router路徑
           renderer: new Renderer({
             renderAfterDocumentEvent: 'render-event',
           }),
           postProcess(renderedRoute) {
-            renderedRoute.route = renderedRoute.originalRoute
-            renderedRoute.html = renderedRoute.html.split(/>[\s]+</gim).join('><')
             if (renderedRoute.route.endsWith('.html')) {
               renderedRoute.outputPath = path.join(__dirname, 'dist', renderedRoute.route)
             }

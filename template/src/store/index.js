@@ -37,5 +37,18 @@ export default new Vuex.Store({
         SET_VIEWPORT (state, { width, height }) {
             state.viewPort = { ...state.viewPort, width, height }
         }
+    },
+    actions: {
+        AJAX (context, { url = '', method = 'get', ...options } = {}) {
+            return new Promise((resolve, reject) => {
+                this._vm.$axios({
+                    url: process.env.VUE_APP_API + url,
+                    method,
+                    ...options
+                }).then(({ data, ...res }) => {
+                    resolve(data)
+                }).catch(e => reject(e))
+            })
+        }
     }
 })
