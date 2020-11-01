@@ -26,6 +26,8 @@ export default {
                 lang: this.meta.lang
             },
             meta: [
+                { name: 'googlebot', content: 'noindex' }, // TODO: 正式上線後刪除
+                { name: 'robots', content: 'noindex' }, // TODO: 正式上線後刪除
                 { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' },
                 { 'http-equiv': 'x-dns-prefetch-control', content: 'on' },
                 { name: 'format-detection', content: 'telephone=no' },
@@ -66,8 +68,6 @@ export default {
     },
     mounted () {
         this.resize = debounce(this.resize, 200)
-        this.SET_DEVICE_INFO(this.$detectDevice())
-        this.SET_VIEWPORT({ width: window.innerWidth, height: window.innerHeight })
         window.addEventListener('resize', this.resize)
     },
     beforeDestroy () {
@@ -77,6 +77,8 @@ export default {
         ...mapMutations(['SET_DEVICE_INFO', 'SET_VIEWPORT']),
         resize () {
             this.SET_VIEWPORT({ width: window.innerWidth, height: window.innerHeight })
+            this.SET_DEVICE_INFO(this.$detectDevice())
+            this.$bus.$emit('global-resize')
         }
     }
 }

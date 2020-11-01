@@ -9,12 +9,16 @@ import axios from '@/plugins/axios'
 import svgIcon from '@/plugins/svgIcon'
 import directive from '@/plugins/directives/index'
 import prototype from '@/plugins/prototype/index'
+import bus from '@/plugins/bus'
+import globalComponent from '@/plugins/globalComponent'
 
 Vue.use(VueMeta)
 Vue.use(axios)
 Vue.use(svgIcon)
 Vue.use(directive)
 Vue.use(prototype)
+Vue.use(bus)
+Vue.use(globalComponent)
 
 Vue.config.productionTip = false
 

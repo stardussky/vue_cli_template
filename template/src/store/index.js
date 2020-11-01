@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import detectDevice from '../plugins/prototype/detectDevice'
 
 Vue.use(Vuex)
 
@@ -7,10 +8,14 @@ export default new Vuex.Store({
     strict: process.env.NODE_ENV === 'development',
     modules: {},
     state: {
-        deviceInfo: null,
+        loading: {
+            minTime: 1000,
+            wait: 0
+        },
+        deviceInfo: detectDevice(),
         viewPort: {
-            width: 0,
-            height: 0,
+            width: window.innerWidth,
+            height: window.innerHeight,
             media: {
                 mobile: '(max-width: 767px)',
                 tablet: '(max-width: 1199px) and (min-width: 768px)',
@@ -28,6 +33,9 @@ export default new Vuex.Store({
                 }
             }
             return null
+        },
+        isLoading (state) {
+            return state.loading.wait > 0
         }
     },
     mutations: {
@@ -36,7 +44,10 @@ export default new Vuex.Store({
         },
         SET_VIEWPORT (state, { width, height }) {
             state.viewPort = { ...state.viewPort, width, height }
-        }
+        },
+        ADD_LOADING (state, num) {
+            state.loading.wait += num
+        },
     },
     actions: {
         AJAX (context, { url = '', method = 'get', ...options } = {}) {
@@ -48,6 +59,17 @@ export default new Vuex.Store({
                 }).then(({ data, ...res }) => {
                     resolve(data)
                 }).catch(e => reject(e))
+            })
+        },
+        START_LOADING ({ state, commit }, callback) {
+            const startTime = Date.now()
+            commit('ADD_LOADING', 1)
+            callback.call(this, () => {
+                const minTime = state.loading.minTime
+                const remainderTime = Date.now() - startTime
+                setTimeout(() => {
+                    commit('ADD_LOADING', -1)
+                }, Math.max(minTime - remainderTime, 0))
             })
         }
     }

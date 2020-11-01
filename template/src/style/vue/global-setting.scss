@@ -44,7 +44,7 @@ button {
 }
 
 .sprite-icons {
-    width: 1em;
-    height: 1em;
+    @include size(1em);
+    
     fill: currentColor;
 }
