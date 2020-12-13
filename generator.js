@@ -7,6 +7,7 @@ module.exports = (api, options) => {
     },
     dependencies: {
       axios: '^0.20.0',
+      "body-scroll-lock": "^3.1.5",
       'core-js': '^3.6.5',
       lodash: '^4.17.20',
       vue: '^2.6.12',
