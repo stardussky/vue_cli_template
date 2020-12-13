@@ -20,16 +20,15 @@ export default {
     name: 'App',
     metaInfo () {
         return {
-            title: this.meta.title,
-            titleTemplate: '%s | Template',
+            title: this.$route.name || process.env.VUE_APP_TITLE,
+            titleTemplate: `%s | ${process.env.VUE_APP_TITLE_TEMPLATE}`,
             htmlAttrs: {
                 lang: this.meta.lang
             },
             meta: [
                 { name: 'googlebot', content: 'noindex' }, // TODO: 正式上線後刪除
                 { name: 'robots', content: 'noindex' }, // TODO: 正式上線後刪除
-                { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' },
-                { 'http-equiv': 'x-dns-prefetch-control', content: 'on' },
+                { name: 'viewport', content: 'width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no' },
                 { name: 'format-detection', content: 'telephone=no' },
                 { name: 'apple-mobile-web-app-capable', content: 'yes' },
                 { name: 'description', content: this.meta.description },
@@ -52,7 +51,10 @@ export default {
                 { itemprop: 'image', content: `${this.meta.url}og_img.jpg` }
             ],
             link: [
-                { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400&display=swap' }
+                { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400&display=swap' },
+                { rel: 'apple-touch-icon', sizes: '180x180', href: `${this.meta.url}favicon/apple-icon-180x180.png` },
+                { rel: 'icon', sizes: '32x32', type: 'image/png', href: `${this.meta.url}favicon/favicon-32x32.png` },
+                { rel: 'icon', sizes: '16x16', type: 'image/png', href: `${this.meta.url}favicon/favicon-16x16.png` }
             ]
         }
     },
@@ -60,8 +62,7 @@ export default {
         return {
             meta: {
                 lang: 'zh-TW',
-                title: 'Cli Template',
-                description: 'Cli Template',
+                description: '',
                 url: process.env.VUE_APP_URL
             }
         }

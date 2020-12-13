@@ -9,8 +9,10 @@ export default new Vuex.Store({
     modules: {},
     state: {
         loading: {
+            type: 0,
             minTime: 1000,
-            wait: 0
+            default: 0,
+            ajax: 0
         },
         deviceInfo: detectDevice(),
         viewPort: {
@@ -35,8 +37,11 @@ export default new Vuex.Store({
             return null
         },
         isLoading (state) {
-            return state.loading.wait > 0
-        }
+            return {
+                default: state.loading.default > 0,
+                ajax: state.loading.ajax > 0
+            }
+        },
     },
     mutations: {
         SET_DEVICE_INFO (state, payload) {
@@ -45,31 +50,39 @@ export default new Vuex.Store({
         SET_VIEWPORT (state, { width, height }) {
             state.viewPort = { ...state.viewPort, width, height }
         },
-        ADD_LOADING (state, num) {
-            state.loading.wait += num
+        SET_LOADING_TYPE (state, type) {
+            state.loading.type = type
+        },
+        SET_LOADING (state, num) {
+            state.loading.type
+                ? state.loading.ajax += num
+                : state.loading.default += num
         },
     },
     actions: {
-        AJAX (context, { url = '', method = 'get', ...options } = {}) {
+        AJAX (context, options) {            
             return new Promise((resolve, reject) => {
                 this._vm.$axios({
-                    url: process.env.VUE_APP_API + url,
-                    method,
                     ...options
                 }).then(({ data, ...res }) => {
                     resolve(data)
-                }).catch(e => reject(e))
+                }).catch(e => {
+                    reject(e)
+                })
             })
         },
         START_LOADING ({ state, commit }, callback) {
-            const startTime = Date.now()
-            commit('ADD_LOADING', 1)
-            callback.call(this, () => {
-                const minTime = state.loading.minTime
-                const remainderTime = Date.now() - startTime
-                setTimeout(() => {
-                    commit('ADD_LOADING', -1)
-                }, Math.max(minTime - remainderTime, 0))
+            return new Promise(resolve => {
+                const startTime = Date.now()
+                commit('SET_LOADING', 1)
+                callback.call(this, () => {
+                    const minTime = state.loading.minTime
+                    const remainderTime = Date.now() - startTime
+                    setTimeout(() => {
+                        commit('SET_LOADING', -1)
+                        resolve(true)
+                    }, Math.max(minTime - remainderTime, 0))
+                })
             })
         }
     }
