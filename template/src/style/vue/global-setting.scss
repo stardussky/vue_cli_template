@@ -1,3 +1,7 @@
+:root {
+    --vh: 1vh;
+}
+
 body, button, input, textarea {
     font-family: map-get($font-family, default);
 }
@@ -11,6 +15,7 @@ html, body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     box-sizing: border-box;
+    overscroll-behavior: none;
 }
 
 *,
@@ -27,6 +32,15 @@ input, textarea {
     padding: 0;
     border: none;
     appearance: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+
+    &:hover, &:active, &:focus {
+        outline: 0;
+    }
 }
 
 button {

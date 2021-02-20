@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import detectDevice from '../plugins/prototype/detectDevice'
+import mobileInnerHeight from '@/plugins/mobileInnerHeight'
 
 Vue.use(Vuex)
 
@@ -17,7 +18,7 @@ export default new Vuex.Store({
         deviceInfo: detectDevice(),
         viewPort: {
             width: window.innerWidth,
-            height: window.innerHeight,
+            height: mobileInnerHeight(),
             media: {
                 mobile: '(max-width: 767px)',
                 tablet: '(max-width: 1199px) and (min-width: 768px)',

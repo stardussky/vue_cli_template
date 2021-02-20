@@ -1,5 +1,8 @@
 <template>
-    <div id="app">
+    <div 
+        id="app" 
+        :style="globalStyle"
+    >
         <div id="nav">
             <router-link to="/index.html">
                 Home
@@ -15,12 +18,13 @@
 <script>
 import { debounce } from 'lodash'
 import { mapMutations } from 'vuex'
+import mobileInnerHeight from '@/plugins/mobileInnerHeight'
 
 export default {
     name: 'App',
     metaInfo () {
         return {
-            title: this.$route.name || process.env.VUE_APP_TITLE,
+            title: this.$route.name || this.title,
             titleTemplate: `%s | ${process.env.VUE_APP_TITLE_TEMPLATE}`,
             htmlAttrs: {
                 lang: this.meta.lang
@@ -62,8 +66,16 @@ export default {
         return {
             meta: {
                 lang: 'zh-TW',
+                title: process.env.VUE_APP_TITLE,
                 description: '',
                 url: process.env.VUE_APP_URL
+            }
+        }
+    },
+    computed: {
+        globalStyle () {
+            return {
+                '--vh': `${window.innerHeight / mobileInnerHeight()}vh`
             }
         }
     },
@@ -77,7 +89,7 @@ export default {
     methods: {
         ...mapMutations(['SET_DEVICE_INFO', 'SET_VIEWPORT']),
         resize () {
-            this.SET_VIEWPORT({ width: window.innerWidth, height: window.innerHeight })
+            this.SET_VIEWPORT({ width: window.innerWidth, height: mobileInnerHeight() })
             this.SET_DEVICE_INFO(this.$detectDevice())
             this.$bus.$emit('global-resize')
         }
