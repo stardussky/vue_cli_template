@@ -1,3 +1,4 @@
+const Webpack = require('webpack')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
 const PrerenderSPAPlugin = require('prerender-spa-plugin')
 const Renderer = PrerenderSPAPlugin.PuppeteerRenderer
@@ -38,50 +39,52 @@ module.exports = {
     const iconDir = path.resolve('src/assets/icon')
     config.module.rule('svg').exclude.add(iconDir).end()
     config.module
-        .rule('svg-sprite-loader')
-        .test(/\.svg$/)
-        .include
-        .add(iconDir)
-        .end()
-        .use('svg-sprite-loader')
-        .loader('svg-sprite-loader')
-        .options({ symbolId: '[name]' })
+      .rule('svg-sprite-loader')
+      .test(/\.svg$/)
+      .include.add(iconDir)
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({ symbolId: '[name]' })
   },
   configureWebpack: () => {
-    if (process.env.NODE_ENV !== 'production') return
-    return {
-      plugins: [
+    const plugins = [
+      new Webpack.ProvidePlugin({}),
+    ]
+    if (process.env.NODE_ENV === 'production') {
+      plugins.push(
         new StyleLintPlugin({
           files: ['**/*.{vue,htm,html,css,sss,less,scss,sass}'],
         }),
         new PrerenderSPAPlugin({
-          staticDir: path.join(__dirname, 'dist'),
-          routes: ['/index.html', '/about.html'], // 填入router路徑
-          renderer: new Renderer({
-            renderAfterDocumentEvent: 'render-event',
-          }),
-          postProcess(renderedRoute) {
-            if (renderedRoute.route.endsWith('.html')) {
-              renderedRoute.outputPath = path.join(__dirname, 'dist', renderedRoute.route)
+            staticDir: path.join(__dirname, 'dist'),
+            routes: ['/index.html', '/about.html'], // 填入router路徑
+            renderer: new Renderer({
+                renderAfterDocumentEvent: 'render-event'
+            }),
+            postProcess (renderedRoute) {
+                if (renderedRoute.route.endsWith('.html')) {
+                    renderedRoute.outputPath = path.join(__dirname, 'dist', renderedRoute.route)
+                }
+                return renderedRoute
+            },
+            minify: {
+                collapseBooleanAttributes: true,
+                collapseWhitespace: true,
+                decodeEntities: true,
+                keepClosingSlash: true,
+                sortAttributes: true,
+                minifyCSS: true,
+                minifyJS: true,
+                processConditionalComments: true,
+                removeEmptyAttributes: true,
+                removeRedundantAttributes: true,
+                trimCustomFragments: true,
+                useShortDoctype: true
             }
-            return renderedRoute
-          },
-          minify: {
-            collapseBooleanAttributes: true,
-            collapseWhitespace: true,
-            decodeEntities: true,
-            keepClosingSlash: true,
-            sortAttributes: true,
-            minifyCSS: true,
-            minifyJS: true,
-            processConditionalComments: true,
-            removeEmptyAttributes: true,
-            removeRedundantAttributes: true,
-            trimCustomFragments: true,
-            useShortDoctype: true,
-          },
-        }),
-      ],
+        })
+      )
     }
+    return { plugins }
   },
 }
