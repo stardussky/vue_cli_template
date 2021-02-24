@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import detectDevice from '../plugins/prototype/detectDevice'
-import mobileInnerHeight from '@/plugins/mobileInnerHeight'
+import detectDevice from '@/plugins/prototype/detectDevice'
+import mobileInnerHeight from '@/plugins/prototype/mobileInnerHeight'
 
 Vue.use(Vuex)
 
@@ -28,11 +28,9 @@ export default new Vuex.Store({
     },
     getters: {
         deviceMedia (state) {
-            if (process.browser) {
-                for (const key in state.viewPort.media) {
-                    if (window.matchMedia(state.viewPort.media[key]).matches) {
-                        return key
-                    }
+            for (const key in state.viewPort.media) {
+                if (window.matchMedia(state.viewPort.media[key]).matches) {
+                    return key
                 }
             }
             return null

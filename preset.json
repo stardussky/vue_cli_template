@@ -11,5 +11,5 @@
       "lintOn": ["save", "commit"]
     }
   },
-  "cssPreprocessor": "node-sass"
+  "cssPreprocessor": "dart-sass"
 }

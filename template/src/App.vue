@@ -18,7 +18,6 @@
 <script>
 import { debounce } from 'lodash'
 import { mapMutations } from 'vuex'
-import mobileInnerHeight from '@/plugins/mobileInnerHeight'
 
 export default {
     name: 'App',
@@ -75,12 +74,12 @@ export default {
     computed: {
         globalStyle () {
             return {
-                '--vh': `${window.innerHeight / mobileInnerHeight()}vh`
+                '--vh': `${window.innerHeight / this.$innerHeight()}vh`
             }
         }
     },
     mounted () {
-        this.resize = debounce(this.resize, 200)
+        this.resize()
         window.addEventListener('resize', this.resize)
     },
     beforeDestroy () {
@@ -88,11 +87,11 @@ export default {
     },
     methods: {
         ...mapMutations(['SET_DEVICE_INFO', 'SET_VIEWPORT']),
-        resize () {
-            this.SET_VIEWPORT({ width: window.innerWidth, height: mobileInnerHeight() })
+        resize: debounce(function () {
+            this.SET_VIEWPORT({ width: window.innerWidth, height: this.$innerHeight() })
             this.SET_DEVICE_INFO(this.$detectDevice())
             this.$bus.$emit('global-resize')
-        }
+        }, 200)
     }
 }
 </script>

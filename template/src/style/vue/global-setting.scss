@@ -9,27 +9,23 @@ body, button, input, textarea {
 html, body {
     @include typo('body', 1);
 
-    margin: 0;
-    padding: 0;
     font-family: map-get($font-family, default);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    box-sizing: border-box;
     overscroll-behavior: none;
 }
 
 *,
 *::before,
 *::after {
-    box-sizing: border-box;
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 input, textarea {
     @include typo('body', 1);
 
-    margin: 0;
-    padding: 0;
     border: none;
     appearance: none;
 }
