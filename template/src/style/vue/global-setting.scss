@@ -2,12 +2,19 @@
     --vh: 1vh;
 }
 
-body, button, input, textarea {
+@include get-container();
+@include grid-system();
+
+body,
+button,
+input,
+textarea {
     font-family: map-get($font-family, default);
 }
 
-html, body {
-    @include typo('body', 1);
+html,
+body {
+    @include typo("body", 1);
 
     font-family: map-get($font-family, default);
     -webkit-font-smoothing: antialiased;
@@ -23,8 +30,9 @@ html, body {
     box-sizing: border-box;
 }
 
-input, textarea {
-    @include typo('body', 1);
+input,
+textarea {
+    @include typo("body", 1);
 
     border: none;
     appearance: none;
@@ -34,32 +42,17 @@ a {
     text-decoration: none;
     color: inherit;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
         outline: 0;
     }
 }
 
 button {
-    @include typo('button', 1);
+    @include typo("button", 1);
 
     background-color: transparent;
-}
-
-.container {
-    @include make-container();
-}
-
-.row {
-    @include make-row();
-
-    &.-block {
-        display: block;
-    }
-
-    &.-no-gutters {
-        margin-right: 0;
-        margin-left: 0;
-    }
 }
 
 .sprite-icons {
