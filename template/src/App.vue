@@ -1,6 +1,6 @@
 <template>
-    <div 
-        id="app" 
+    <div
+        id="app"
         :style="globalStyle"
     >
         <div id="nav">
@@ -16,8 +16,7 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
-import { mapMutations } from 'vuex'
+import { viewport } from '@/plugins/prototype/viewport/index'
 
 export default {
     name: 'App',
@@ -72,32 +71,22 @@ export default {
         }
     },
     computed: {
+        ...viewport.vpHeight,
         globalStyle () {
             return {
-                '--vh': `${window.innerHeight / this.$innerHeight()}vh`
+                '--vh': `${window.innerHeight / this.vpHeight}vh`
             }
         }
     },
-    mounted () {
-        this.resize()
-        window.addEventListener('resize', this.resize)
-    },
     beforeDestroy () {
-        window.removeEventListener('resize', this.resize)
-    },
-    methods: {
-        ...mapMutations(['SET_DEVICE_INFO', 'SET_VIEWPORT']),
-        resize: debounce(function () {
-            this.SET_VIEWPORT({ width: window.innerWidth, height: this.$innerHeight() })
-            this.SET_DEVICE_INFO(this.$detectDevice())
-            this.$bus.$emit('global-resize')
-        }, 200)
+        this.$viewport.destroy()
     }
 }
 </script>
 
 <style lang="scss">
 @import '@/style/_main.scss';
+
 #app {
     text-align: center;
     color: #2c3e50;
