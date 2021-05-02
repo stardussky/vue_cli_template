@@ -14,6 +14,7 @@ export default new Vuex.Store({
     modules: {},
     state: {
         loadingConfig: {
+            minTime: LOADING.MIN_LOAD_TIME,
             type: LOADING.LOADING_TYPE_DEFAULT,
         },
         loadingStack: [],
@@ -57,7 +58,7 @@ export default new Vuex.Store({
                 const endTime = Date.now()
                 setTimeout(() => {
                     results.forEach(result => commit('DEL_LOADING_STACK'))
-                }, LOADING.MIN_LOAD_TIME - (endTime - startTime))
+                }, state.loadingConfig.minTime - (endTime - startTime))
             })
         },
     },
