@@ -5,29 +5,28 @@
 @include get-container();
 @include grid-system();
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
 body,
 button,
 input,
 textarea {
     font-family: map-get($font-family, default);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 html,
 body {
     @include typo("body", 1);
 
-    font-family: map-get($font-family, default);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    min-width: 320px;
     overscroll-behavior: none;
-}
-
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
 }
 
 input,
@@ -36,6 +35,15 @@ textarea {
 
     border: none;
     appearance: none;
+}
+
+pre {
+    white-space: pre-line;
+}
+
+::selection {
+    color: map-get($colors, white);
+    background: map-get($colors, black);
 }
 
 a {
@@ -53,10 +61,4 @@ button {
     @include typo("button", 1);
 
     background-color: transparent;
-}
-
-.sprite-icons {
-    @include size(1em);
-
-    fill: currentColor;
 }

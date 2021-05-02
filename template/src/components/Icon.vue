@@ -11,17 +11,17 @@ export default {
     props: {
         name: {
             type: String,
-            required: true
-        }
-    }
+            required: true,
+        },
+    },
 }
 </script>
 
 <style lang='scss'>
 .icon {
+    @include size(1rem);
+
     overflow: hidden;
-    width: 1rem;
-    height: 1rem;
     fill: currentColor;
 }
 </style>

@@ -10,8 +10,4 @@ instance.interceptors.response.use(response => {
     return response
 })
 
-export { instance }
-
-export default function (Vue) {
-    Vue.prototype.$axios = instance
-}
+export default instance

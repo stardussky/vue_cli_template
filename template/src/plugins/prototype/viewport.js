@@ -1,12 +1,12 @@
 import { mapState } from 'vuex'
 import { debounce } from 'lodash'
 import store from '@/store'
-import detectDevice from './detectDevice'
-import innerHeight from './mobileInnerHeight'
+import { detect } from 'detect-browser'
+import mobileInnerHeight from '@/plugins/functions/mobileInnerHeight'
 
-const moduleName = 'ViewportModule'
+const innerHeight = mobileInnerHeight()
 const getterKeys = ['vpWidth', 'vpHeight', 'device', 'mediaType', 'isDesktop', 'isTablet', 'isMobile', 'isPc', 'isIE']
-
+const moduleName = 'ViewportModule'
 const storeModule = {
     namespaced: true,
     state: () => getterKeys.reduce((acc, curr) => {
@@ -20,8 +20,8 @@ const storeModule = {
                     state[key] = value
                 }
             }
-        }
-    }
+        },
+    },
 }
 
 class Viewport {
@@ -29,12 +29,12 @@ class Viewport {
         this.information = {
             width: window.innerWidth,
             height: innerHeight(),
-            device: detectDevice(),
+            device: detect(),
             media: {
                 mobile: '(max-width: 767px)',
                 tablet: '(max-width: 1199px) and (min-width: 768px)',
-                desktop: '(min-width:1200px)'
-            }
+                desktop: '(min-width:1200px)',
+            },
         }
 
         store.registerModule(moduleName, storeModule)
@@ -44,11 +44,10 @@ class Viewport {
 
     refresh = debounce(() => {
         this.vpWidth = window.innerWidth
-        this.vpHeight = innerHeight()
-        this.device = detectDevice()
+        this.vpHeight = innerHeight(true)
+        this.device = detect()
 
         store.commit(`${moduleName}/SET_INFORMATION`, this.info)
-        
         this.onResize?.()
     }, 200)
 
@@ -111,21 +110,21 @@ class Viewport {
     }
 
     get isPc () {
-        const { device } = this.device
-        return device === 'pc'
+        const { os } = this.device
+        return os !== 'iOS' && os !== 'Android OS'
     }
 
     get isIE () {
-        const { browser } = this.device
-        return browser === 'ie'
+        const { name } = this.device
+        return name === 'ie'
     }
 }
 
-export const viewport = getterKeys.reduce((acc, curr) => {
+const viewport = new Viewport(store)
+
+export const mapViewport = getterKeys.reduce((acc, curr) => {
     acc[curr] = mapState(moduleName, { [curr]: state => state[curr] })
     return acc
 }, {})
 
-export default () => {
-    return new Viewport(store)
-}
+export default viewport

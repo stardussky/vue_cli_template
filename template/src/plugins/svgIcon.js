@@ -4,6 +4,4 @@ const requireAll = requireContext => requireContext.keys().map(requireContext)
 const req = require.context('@/assets/icon/', true, /\.svg$/)
 requireAll(req)
 
-export default function (Vue) {
-    Vue.component('Icon', Icon)
-}
+export default Icon

@@ -3,40 +3,47 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+const LOADING = Object.freeze({
+    MIN_LOAD_TIME: 1000,
+    LOADING_TYPE_DEFAULT: 'default',
+    LOADING_TYPE_AJAX: 'ajax',
+})
+
 export default new Vuex.Store({
     strict: process.env.NODE_ENV === 'development',
     modules: {},
     state: {
-        loading: {
-            type: 0,
-            minTime: 1000,
-            default: 0,
-            ajax: 0
-        }
+        loadingConfig: {
+            type: LOADING.LOADING_TYPE_DEFAULT,
+        },
+        loadingStack: [],
     },
     getters: {
         isLoading (state) {
-            return {
-                default: state.loading.default > 0,
-                ajax: state.loading.ajax > 0
-            }
-        }
+            return !!state.loadingStack.length
+        },
     },
     mutations: {
-        SET_LOADING_TYPE (state, type) {
-            state.loading.type = type
+        CHANGE_LOADING_TYPE (state, payload) {
+            const type = LOADING[payload]
+            if (type && typeof type === 'string') {
+                state.loadingConfig.type = type
+            }
         },
-        SET_LOADING (state, num) {
-            state.loading.type
-                ? state.loading.ajax += num
-                : state.loading.default += num
-        }
+        ADD_LOADING_STACK (state, payload) {
+            if (payload instanceof Promise) {
+                state.loadingStack.push(payload)
+            }
+        },
+        DEL_LOADING_STACK (state) {
+            state.loadingStack.shift()
+        },
     },
     actions: {
         AJAX (context, options) {
             return new Promise((resolve, reject) => {
                 this._vm.$axios({
-                    ...options
+                    ...options,
                 }).then(({ data, ...res }) => {
                     resolve(data)
                 }).catch(e => {
@@ -44,19 +51,14 @@ export default new Vuex.Store({
                 })
             })
         },
-        START_LOADING ({ state, commit }, callback) {
-            return new Promise(resolve => {
-                const startTime = Date.now()
-                commit('SET_LOADING', 1)
-                callback.call(this, () => {
-                    const minTime = state.loading.minTime
-                    const remainderTime = Date.now() - startTime
-                    setTimeout(() => {
-                        commit('SET_LOADING', -1)
-                        resolve(true)
-                    }, Math.max(minTime - remainderTime, 0))
-                })
+        WAIT_LOADING ({ state, commit }) {
+            const startTime = Date.now()
+            return Promise.all(state.loadingStack).then(results => {
+                const endTime = Date.now()
+                setTimeout(() => {
+                    results.forEach(result => commit('DEL_LOADING_STACK'))
+                }, LOADING.MIN_LOAD_TIME - (endTime - startTime))
             })
-        }
-    }
+        },
+    },
 })

@@ -1,6 +1,6 @@
 module.exports = {
     extends: [
-        'stylelint-config-standard'
+        'stylelint-config-standard',
     ],
     plugins: ['stylelint-order'],
     // add your custom config here
@@ -98,7 +98,7 @@ module.exports = {
             'box-shadow',
             'text-shadow',
             'resize',
-            'transition'
-        ]
-    }
+            'transition',
+        ],
+    },
 }

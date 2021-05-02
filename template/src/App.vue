@@ -12,11 +12,17 @@
             </router-link>
         </div>
         <router-view />
+        <AjaxLoading />
+        <Loading />
     </div>
 </template>
 
 <script>
-import { viewport } from '@/plugins/prototype/viewport/index'
+import { mapViewport } from '@/plugins/prototype/viewport'
+import { mapMutations, mapActions } from 'vuex'
+import WebFont from 'webfontloader'
+import Loading from '@/components/Loading'
+import AjaxLoading from '@/components/AjaxLoading'
 
 export default {
     name: 'App',
@@ -25,7 +31,7 @@ export default {
             title: this.$route.name || this.title,
             titleTemplate: `%s | ${process.env.VUE_APP_TITLE_TEMPLATE}`,
             htmlAttrs: {
-                lang: this.meta.lang
+                lang: this.meta.lang,
             },
             meta: [
                 { name: 'googlebot', content: 'noindex' }, // TODO: 正式上線後刪除
@@ -50,37 +56,60 @@ export default {
                 { name: 'twitter:image', content: `${this.meta.url}og_img.jpg` },
                 { itemprop: 'name', content: this.meta.title },
                 { itemprop: 'description', content: this.meta.description },
-                { itemprop: 'image', content: `${this.meta.url}og_img.jpg` }
+                { itemprop: 'image', content: `${this.meta.url}og_img.jpg` },
             ],
             link: [
-                { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400&display=swap' },
                 { rel: 'apple-touch-icon', sizes: '180x180', href: `${this.meta.url}favicon/apple-icon-180x180.png` },
                 { rel: 'icon', sizes: '32x32', type: 'image/png', href: `${this.meta.url}favicon/favicon-32x32.png` },
-                { rel: 'icon', sizes: '16x16', type: 'image/png', href: `${this.meta.url}favicon/favicon-16x16.png` }
-            ]
+                { rel: 'icon', sizes: '16x16', type: 'image/png', href: `${this.meta.url}favicon/favicon-16x16.png` },
+            ],
         }
     },
-    data () {
+    components: {
+        Loading,
+        AjaxLoading,
+    },
+    setup (props, context) {
         return {
             meta: {
                 lang: 'zh-TW',
                 title: process.env.VUE_APP_TITLE,
                 description: '',
-                url: process.env.VUE_APP_URL
-            }
+                url: process.env.VUE_APP_URL,
+            },
         }
     },
     computed: {
-        ...viewport.vpHeight,
+        ...mapViewport.vpHeight,
         globalStyle () {
             return {
-                '--vh': `${window.innerHeight / this.vpHeight}vh`
+                '--vh': `${window.innerHeight / this.vpHeight}vh`,
             }
-        }
+        },
+    },
+    async mounted () {
+        this.ADD_LOADING_STACK(this.loadFont())
+        await this.WAIT_LOADING()
     },
     beforeDestroy () {
         this.$viewport.destroy()
-    }
+    },
+    methods: {
+        ...mapMutations(['ADD_LOADING_STACK']),
+        ...mapActions(['WAIT_LOADING']),
+        loadFont () {
+            return new Promise(resolve => {
+                WebFont.load({
+                    google: {
+                        families: ['Noto Sans TC:300,400,700'],
+                    },
+                    active () {
+                        resolve()
+                    },
+                })
+            })
+        },
+    },
 }
 </script>
 

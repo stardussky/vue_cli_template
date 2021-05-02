@@ -48,40 +48,38 @@ module.exports = {
       .options({ symbolId: '[name]' })
   },
   configureWebpack: () => {
-    const plugins = [
-      new Webpack.ProvidePlugin({}),
-    ]
+    const plugins = [new Webpack.ProvidePlugin({})]
     if (process.env.NODE_ENV === 'production') {
       plugins.push(
         new StyleLintPlugin({
           files: ['**/*.{vue,htm,html,css,sss,less,scss,sass}'],
         }),
         new PrerenderSPAPlugin({
-            staticDir: path.join(__dirname, 'dist'),
-            routes: ['/index.html', '/about.html'], // 填入router路徑
-            renderer: new Renderer({
-                renderAfterDocumentEvent: 'render-event'
-            }),
-            postProcess (renderedRoute) {
-                if (renderedRoute.route.endsWith('.html')) {
-                    renderedRoute.outputPath = path.join(__dirname, 'dist', renderedRoute.route)
-                }
-                return renderedRoute
-            },
-            minify: {
-                collapseBooleanAttributes: true,
-                collapseWhitespace: true,
-                decodeEntities: true,
-                keepClosingSlash: true,
-                sortAttributes: true,
-                minifyCSS: true,
-                minifyJS: true,
-                processConditionalComments: true,
-                removeEmptyAttributes: true,
-                removeRedundantAttributes: true,
-                trimCustomFragments: true,
-                useShortDoctype: true
+          staticDir: path.join(__dirname, 'dist'),
+          routes: ['/index.html', '/about.html'], // 填入router路徑
+          renderer: new Renderer({
+            renderAfterDocumentEvent: 'render-event',
+          }),
+          postProcess(renderedRoute) {
+            if (renderedRoute.route.endsWith('.html')) {
+              renderedRoute.outputPath = path.join(__dirname, 'dist', renderedRoute.route)
             }
+            return renderedRoute
+          },
+          minify: {
+            collapseBooleanAttributes: true,
+            collapseWhitespace: true,
+            decodeEntities: true,
+            keepClosingSlash: true,
+            sortAttributes: true,
+            minifyCSS: true,
+            minifyJS: true,
+            processConditionalComments: true,
+            removeEmptyAttributes: true,
+            removeRedundantAttributes: true,
+            trimCustomFragments: true,
+            useShortDoctype: true,
+          },
         })
       )
     }
