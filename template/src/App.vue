@@ -12,17 +12,17 @@
             </router-link>
         </div>
         <router-view />
-        <AjaxLoading />
-        <Loading />
+        <LoadingAjax />
+        <LoadingDefault />
     </div>
 </template>
 
 <script>
-import { mapViewport } from '@/plugins/prototype/viewport'
-import { mapMutations, mapActions } from 'vuex'
+import { ref, provide, computed, watch, onMounted, onBeforeUnmount } from '@vue/composition-api'
 import WebFont from 'webfontloader'
-import Loading from '@/components/Loading'
-import AjaxLoading from '@/components/AjaxLoading'
+import viewport from '@/plugins/functions/viewport'
+import LoadingDefault from '@/components/LoadingDefault'
+import LoadingAjax from '@/components/LoadingAjax'
 
 export default {
     name: 'App',
@@ -66,38 +66,30 @@ export default {
         }
     },
     components: {
-        Loading,
-        AjaxLoading,
+        LoadingDefault,
+        LoadingAjax,
     },
-    setup (props, context) {
-        return {
-            meta: {
-                lang: 'zh-TW',
-                title: process.env.VUE_APP_TITLE,
-                description: '',
-                url: process.env.VUE_APP_URL,
-            },
-        }
-    },
-    computed: {
-        ...mapViewport.vpHeight,
-        globalStyle () {
-            return {
-                '--vh': `${window.innerHeight / this.vpHeight}vh`,
+    setup (props, { root }) {
+        const vp = ref(viewport)
+
+        const viewportInfo = computed(() => vp.value.info)
+        const globalStyle = computed(() => {
+            const style = {
+                '--vh': '1vh',
             }
-        },
-    },
-    async mounted () {
-        this.ADD_LOADING_STACK(this.loadFont())
-        await this.WAIT_LOADING()
-    },
-    beforeDestroy () {
-        this.$viewport.destroy()
-    },
-    methods: {
-        ...mapMutations(['ADD_LOADING_STACK']),
-        ...mapActions(['WAIT_LOADING']),
-        loadFont () {
+            if (process.browser) {
+                style['--vh'] = `${window.innerHeight / viewportInfo.value.vpHeight}vh`
+            }
+            return style
+        })
+
+        watch(() => root.$route, (to, from) => {
+            root.$nextTick(() => {
+                root.$store.dispatch('WAIT_LOADING')
+            })
+        }, { immediate: true })
+
+        const loadFont = () => {
             return new Promise(resolve => {
                 WebFont.load({
                     google: {
@@ -108,7 +100,26 @@ export default {
                     },
                 })
             })
-        },
+        }
+
+        onMounted(() => {
+            root.$store.dispatch('ADD_LOADING_STACK', loadFont())
+        })
+        onBeforeUnmount(() => {
+            vp.value.destroy()
+        })
+
+        provide('viewportInfo', viewportInfo)
+
+        return {
+            meta: {
+                lang: 'zh-TW',
+                title: process.env.VUE_APP_TITLE,
+                description: '',
+                url: process.env.VUE_APP_URL,
+            },
+            globalStyle,
+        }
     },
 }
 </script>

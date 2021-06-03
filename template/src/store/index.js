@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const LOADING = Object.freeze({
-    MIN_LOAD_TIME: 1000,
+    MIN_LOAD_TIME: 500,
     LOADING_TYPE_DEFAULT: 'default',
     LOADING_TYPE_AJAX: 'ajax',
 })
@@ -31,12 +31,10 @@ export default new Vuex.Store({
                 state.loadingConfig.type = type
             }
         },
-        ADD_LOADING_STACK (state, payload) {
-            if (payload instanceof Promise) {
-                state.loadingStack.push(payload)
-            }
+        SET_LOADING_STACK (state, payload) {
+            state.loadingStack.push(payload)
         },
-        DEL_LOADING_STACK (state) {
+        DEL_LOADING_STACK (state, payload) {
             state.loadingStack.shift()
         },
     },
@@ -51,6 +49,17 @@ export default new Vuex.Store({
                     reject(e)
                 })
             })
+        },
+        ADD_LOADING_STACK ({ state, commit }, payload) {
+            if (Array.isArray(payload)) {
+                const promise = Promise.all(payload.filter(p => p instanceof Promise))
+                commit('SET_LOADING_STACK', promise)
+                return promise
+            }
+            if (payload instanceof Promise) {
+                commit('SET_LOADING_STACK', payload)
+                return payload
+            }
         },
         WAIT_LOADING ({ state, commit }) {
             const startTime = Date.now()

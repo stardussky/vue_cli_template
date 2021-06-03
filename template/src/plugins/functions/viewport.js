@@ -1,28 +1,9 @@
-import { mapState } from 'vuex'
 import { debounce } from 'lodash'
-import store from '@/store'
 import { detect } from 'detect-browser'
-import mobileInnerHeight from '@/plugins/functions/mobileInnerHeight'
+import mobileInnerHeight from './mobileInnerHeight'
 
 const innerHeight = mobileInnerHeight()
 const getterKeys = ['vpWidth', 'vpHeight', 'device', 'mediaType', 'isDesktop', 'isTablet', 'isMobile', 'isPc', 'isIE']
-const moduleName = 'ViewportModule'
-const storeModule = {
-    namespaced: true,
-    state: () => getterKeys.reduce((acc, curr) => {
-        acc[curr] = null
-        return acc
-    }, {}),
-    mutations: {
-        SET_INFORMATION (state, payload) {
-            for (const [key, value] of Object.entries(payload)) {
-                if (state[key] !== undefined) {
-                    state[key] = value
-                }
-            }
-        },
-    },
-}
 
 class Viewport {
     constructor () {
@@ -37,8 +18,6 @@ class Viewport {
             },
         }
 
-        store.registerModule(moduleName, storeModule)
-        store.commit(`${moduleName}/SET_INFORMATION`, this.info)
         window.addEventListener('resize', this.refresh)
     }
 
@@ -47,13 +26,10 @@ class Viewport {
         this.vpHeight = innerHeight(true)
         this.device = detect()
 
-        store.commit(`${moduleName}/SET_INFORMATION`, this.info)
         this.onResize?.()
     }, 200)
 
     destroy () {
-        store.unregisterModule(moduleName)
-
         window.removeEventListener('resize', this.refresh)
     }
 
@@ -120,11 +96,4 @@ class Viewport {
     }
 }
 
-const viewport = new Viewport(store)
-
-export const mapViewport = getterKeys.reduce((acc, curr) => {
-    acc[curr] = mapState(moduleName, { [curr]: state => state[curr] })
-    return acc
-}, {})
-
-export default viewport
+export default new Viewport()

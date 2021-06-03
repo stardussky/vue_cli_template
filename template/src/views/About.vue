@@ -8,22 +8,31 @@
 </template>
 
 <script>
-import { mapMutations, mapActions } from 'vuex'
+import { onMounted } from '@vue/composition-api'
+import functions from '@/compositions/functions'
 
 export default {
     name: 'About',
-    methods: {
-        ...mapMutations(['CHANGE_LOADING_TYPE', 'ADD_LOADING_STACK']),
-        ...mapActions(['WAIT_LOADING']),
-        getApi () {
-            this.CHANGE_LOADING_TYPE('LOADING_TYPE_AJAX')
-            this.ADD_LOADING_STACK(new Promise(resolve => {
+    setup (props, { root }) {
+        const { loadImage } = functions()
+
+        const getApi = () => {
+            root.$store.commit('CHANGE_LOADING_TYPE', 'LOADING_TYPE_AJAX')
+            root.$store.dispatch('ADD_LOADING_STACK', new Promise(resolve => {
                 setTimeout(() => {
                     resolve()
                 }, 1000)
             }))
-            this.WAIT_LOADING()
-        },
+            root.$store.dispatch('WAIT_LOADING')
+        }
+
+        onMounted(() => {
+            root.$store.dispatch('ADD_LOADING_STACK', loadImage())
+        })
+
+        return {
+            getApi,
+        }
     },
 }
 </script>
